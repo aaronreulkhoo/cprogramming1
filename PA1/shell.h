@@ -33,13 +33,14 @@ const char *builtin_commands[] = {
   "checkdaemon" // calls shellCheckDaemon
 };
 
+//Returns number of commands available
 int numOfBuiltinFunctions() {
   return sizeof(builtin_commands) / sizeof(char *);
 };
 
 
 /*
-The fundamental functions of the shell interface
+The fundamental functions of the shell interface to be implemented
 */
 void shellLoop(void);
 char **shellTokenizeInput(char *line);
@@ -48,7 +49,11 @@ int shellExecuteInput(char **args);
 
 
 /*
-Functions of the shell interface
+Functions of the shell interface to be implemented
+Free to declare further functions in shell.h, but:
+DO NOT modify ANY of these original functions: not the arguments, not the names. 
+DO NOT import more libraries. These are all the libraries that you can use. 
+DO NOT create more scripts as part of your answer. You are allowed to only modify the given scripts. 
 */
 int shellCD(char **args);
 int shellHelp(char **args);
