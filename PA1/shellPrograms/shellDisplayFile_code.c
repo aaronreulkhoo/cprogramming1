@@ -11,7 +11,7 @@ int shellDisplayFile_code(char** args)
     fp =fopen(args[1],"r");
 
     if (!fp){
-    	printf("CSEShell: File doesn't exist.\n");
+    	printf("File doesn't exist.\n");
         return 1;
     }
 

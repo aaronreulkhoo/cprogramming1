@@ -13,31 +13,70 @@
 #include "shellPrograms.h"
 
 //TODO: change to appropriate path
-char *path = "/Users/natalie_agus/Dropbox/50.005 Computer System Engineering/2020/PA1 Makeshell Daemon/PA1/logfile_test.txt";
+char *path = "/mnt/c/Users/aaron/All_C/cse_programming/cse_assignment1/PA1/logfiles.txt";
 
 /*This function summons a daemon process out of the current process*/
-static int create_daemon()
-{
-
+static int create_daemon() {
     /* TASK 7 */
     // Incantation on creating a daemon with fork() twice
-
     // 1. Fork() from the parent process
-    // 2. Close parent with exit(1)
-    // 3. On child process (this is intermediate process), call setsid() so that the child becomes session leader to lose the controlling TTY
-    // 4. Ignore SIGCHLD, SIGHUP
-    // 5. Fork() again, parent (the intermediate) process terminates
-    // 6. Child process (the daemon) set new file permissions using umask(0). Daemon's PPID at this point is 1 (the init)
-    // 7. Change working directory to root
-    // 8. Close all open file descriptors using sysconf(_SC_OPEN_MAX) and redirect fd 0,1,2 to /dev/null
-    // 9. Return to main
+    // printf("//FORKING//\n");
+    int forkValue=fork();
+    if (forkValue < 0) { //if fork fails
+        perror("Failed to fork.\n");
+        return 0;
+    }
 
-    return 1;
+    // 2. Close parent with exit(1)
+    else if (forkValue > 0) { // parent (original fork)
+        // printf("//PARENT EXITING//\n");
+        exit(1);
+    }
+    
+    else { //child (intermediate)
+        // 3. On child process (this is intermediate process), call setsid() so that the child becomes session leader to lose the controlling TTY
+        setsid();
+        
+        // 4. Ignore SIGCHLD, SIGHUP
+        signal(SIGCHLD, SIG_IGN);
+        signal(SIGHUP, SIG_IGN);
+
+        // 5. Fork() again, parent (the intermediate) process terminates
+        // printf("//FORKING AGAIN//\n");
+        int forkValue2=fork();
+        if (forkValue2 < 0) { //if fork fails
+            perror("Failed to fork.\n");
+            return 0;
+        } else if (forkValue2>0){ //parent (intermediate)
+            // printf("//INTERMEDIATE EXITING//\n");
+            exit(1);
+        }
+        else { //child (daemon)
+        // 6. Child process (the daemon) set new file permissions using umask(0). Daemon's PPID at this point is 1 (the init)
+        // printf("//UMASK//\n");
+        umask(0);
+        
+        // 7. Change working directory to root
+        // printf("//CHDIR//\n");
+        chdir("/");
+
+        // 8. Close all open file descriptors using sysconf(_SC_OPEN_MAX) and redirect fd 0,1,2 to /dev/null
+        // printf("THIS SHOULD PRINT\n");
+        for (int x = sysconf(_SC_OPEN_MAX); x>=0; x--) close (x);
+        
+        /* Attach file descriptors 0, 1, and 2 to /dev/null. */
+        // printf("THIS SHOULDN'T PRINT\n");
+        FILE *fd0=open("/dev/null", O_RDWR);
+        FILE *fd1=dup(0);
+        FILE *fd2=dup(0);
+        // printf("THIS ALSO SHOULDN'T PRINT\n");
+        // 9. Return to main
+        return 1;
+        }
+    }
 }
 
-static int daemon_work()
-{
-
+static int daemon_work() {
     int num = 0;
     FILE *fptr;
 
@@ -53,7 +92,6 @@ static int daemon_work()
 
     while (1)
     {
-
         //use appropriate location if you are using MacOS or Linux
         //TODO: Change to appropriate path
         fptr = fopen(path, "a");

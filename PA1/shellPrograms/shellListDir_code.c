@@ -8,7 +8,7 @@ int shellListDir_code(char **args)
     if (args[1] != NULL)
     {
         char *token = strtok(args[1], SHELL_OPT_DELIM);
-        printf("Token is %s\n", token);
+        // printf("Token is %s\n", token);
 
         if (token != NULL)
         {
@@ -17,7 +17,7 @@ int shellListDir_code(char **args)
                 //call listdirall,
                 //execvp still need the ./shellPrograms because this was called
                 //by a process that was at the .. directory
-                if (execvp("./shellPrograms/listdirall", args) == -1)
+                if (execvp("/mnt/c/Users/aaron/All_C/cse_programming/cse_assignment1/PA1/shellPrograms/listdirall", args) == -1)
                 {
                     perror("Failed to execute, command is invalid.");
                 }

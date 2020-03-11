@@ -72,6 +72,6 @@ int shellListDirAll_code(char** args)
 }
 
 int main(int argc, char** args){
-    printf("I am called by execvp\n");
+    // printf("I am called by execvp\n");
     return shellListDirAll_code(args);
 }
